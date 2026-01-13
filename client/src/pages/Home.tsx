@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Shield, Radio, FileText, Users, AlertTriangle, Copy, Check, Menu, ExternalLink, ChevronDown } from "lucide-react";
+import { Shield, Radio, FileText, Users, AlertTriangle, Copy, Check, Menu, ExternalLink, ChevronDown, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,57 +90,85 @@ export default function Home() {
     const selects = reportForm.querySelectorAll('select');
     const textareas = reportForm.querySelectorAll('textarea');
     let reportData = "";
-    reportData += `نوع التقرير: ${["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"][selectedReport]}\n`;
-    reportData += `وقت البداية: ${inputs[0]?.value || "لا يوجد"}\n`;
-    reportData += `وقت النهاية: ${inputs[1]?.value || "لا يوجد"}\n`;
 
-    if (selectedReport === 0) {
-      // Los Santos Report
-      reportData += `العمليات: ${inputs[2]?.value || "لا يوجد"}\n`;
-      reportData += `نائب العمليات: ${inputs[3]?.value || "لا يوجد"}\n`;
-      reportData += "\n--- الدورات المفعلة ---\n";
-      const losLosLabels = ["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"];
-      textareas.forEach((textarea: any, index: number) => {
-        if (index < losLosLabels.length) {
-          const value = textarea.value || "لا يوجد";
-          reportData += `${losLosLabels[index]}: ${value}\n`;
-        }
-      });
-      reportData += `\nتسجيل الخروج: ${textareas[textareas.length - 1]?.value || "لا يوجد"}\n`;
-    } else if (selectedReport === 1) {
-      // Sandy & Paleto Report
-      reportData += `العمليات: ${inputs[2]?.value || "لا يوجد"}\n`;
-      reportData += `نائب العمليات: ${inputs[3]?.value || "لا يوجد"}\n`;
-      reportData += "\n--- الدورات المفعلة ---\n";
-      const sandyLabels = ["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "سين 1", "سين 2", "باء 1", "عين 1", "سير 1"];
-      let textareaIndex = 0;
-      sandyLabels.forEach((label) => {
-        if (label && textareaIndex < textareas.length) {
-          const value = textareas[textareaIndex]?.value || "لا يوجد";
-          reportData += `${label}: ${value}\n`;
-          textareaIndex++;
-        }
-      });
-      reportData += `\nتسجيل الخروج: ${textareas[textareas.length - 1]?.value || "لا يوجد"}\n`;
-    } else if (selectedReport === 2) {
-      // Officers Report
-      reportData += `الضابط: ${inputs[2]?.value || "لا يوجد"}\n`;
-      reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
-      reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
-      reportData += `الجهات الأمنية المتواجدة: ${textareas[1]?.value || "لا يوجد"}\n`;
-      reportData += `ملاحظة إيجابية: ${textareas[2]?.value || "لا يوجد"}\n`;
-      reportData += `ملاحظة سلبية: ${textareas[3]?.value || "لا يوجد"}\n`;
-    } else if (selectedReport === 3) {
-      // Zone Officer Report
-      reportData += `رئيس رقباء: ${inputs[2]?.value || "لا يوجد"}\n`;
-      reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
-      reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
-      reportData += `الوحدات التابعة للمنطقة: ${textareas[1]?.value || "لا يوجد"}\n`;
-      reportData += `عدد الوحدات عند الاستلام: ${textareas[2]?.value || "لا يوجد"}\n`;
-      reportData += `عدد الوحدات عند الانتهاء: ${textareas[3]?.value || "لا يوجد"}\n`;
-      reportData += `ملاحظة إيجابية: ${textareas[4]?.value || "لا يوجد"}\n`;
-      reportData += `ملاحظة سلبية: ${textareas[5]?.value || "لا يوجد"}\n`;
-      reportData += `وقت الشفت: ${selects[1]?.value || "لا يوجد"}\n`;
+    if (selectedReport === 1) {
+      // Sandy & Paleto Report with the exact requested format
+      const startTime = inputs[0]?.value || "لايوجد";
+      const endTime = inputs[1]?.value || "لايوجد";
+      const operations = inputs[2]?.value || "";
+      const deputy = inputs[3]?.value || "";
+      
+      const leadership = textareas[0]?.value || "لايوجد";
+      const officers = textareas[1]?.value || "لايوجد";
+      const activeCourses = textareas[2]?.value || "لايوجد";
+      const militaryPolice = textareas[3]?.value || "لايوجد";
+      const guardOfficer = textareas[4]?.value || "لايوجد";
+      const seinUnits = textareas[5]?.value || "لايوجد";
+      const baaUnits = textareas[6]?.value || "1";
+      const sharedUnits = textareas[7]?.value || "لا يوجد";
+      const logoutInfo = textareas[8]?.value || "";
+
+      reportData += `تم استلام مهام العمليات لمنطقة ساندي وبوليتو في تمام الساعه ${startTime} إلى في تمام الساعة ${endTime}\n\n\n`;
+      reportData += `العمليات| ${operations}\n`;
+      reportData += ` نائب العمليات | ${deputy}\n`;
+      reportData += `القيادات \n${leadership}\n\n`;
+      reportData += `—————————————————\n\n`;
+      reportData += `الضباط\n${officers}\n`;
+      reportData += `—————————————————\n\n`;
+      reportData += `الدورات المفعلة :\n${activeCourses}\n\n`;
+      reportData += `—————————————————\n\n`;
+      reportData += `الشرطة العسكرية\n${militaryPolice}\n\n`;
+      reportData += `—————————————————\n\n`;
+      reportData += `ضابط خفر :\n${guardOfficer}\n\n\n`;
+      reportData += `—————————————————\n`;
+      reportData += `وحدات سين \n\n\n`;
+      reportData += `${seinUnits}\n \n\n`;
+      reportData += `—————————————————\n\n\n`;
+      reportData += `—————————————————\n\n\n`;
+      reportData += `—————————————————\n\n`;
+      reportData += `باء : ${baaUnits} \n\n\n\n\n`;
+      reportData += `—————————————————\n\n\n\n\n`;
+      reportData += `الوحدات المشتركة :\n${sharedUnits}\n\n`;
+      reportData += `————————————————— \n\n`;
+      reportData += `تسجيل خروج :\n${logoutInfo}`;
+    } else {
+      reportData += `نوع التقرير: ${["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"][selectedReport]}\n`;
+      reportData += `وقت البداية: ${inputs[0]?.value || "لا يوجد"}\n`;
+      reportData += `وقت النهاية: ${inputs[1]?.value || "لا يوجد"}\n`;
+
+      if (selectedReport === 0) {
+        // Los Santos Report
+        reportData += `العمليات: ${inputs[2]?.value || "لا يوجد"}\n`;
+        reportData += `نائب العمليات: ${inputs[3]?.value || "لا يوجد"}\n`;
+        reportData += "\n--- الدورات المفعلة ---\n";
+        const losLosLabels = ["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"];
+        textareas.forEach((textarea: any, index: number) => {
+          if (index < losLosLabels.length) {
+            const value = textarea.value || "لا يوجد";
+            reportData += `${losLosLabels[index]}: ${value}\n`;
+          }
+        });
+        reportData += `\nتسجيل الخروج: ${textareas[textareas.length - 1]?.value || "لا يوجد"}\n`;
+      } else if (selectedReport === 2) {
+        // Officers Report
+        reportData += `الضابط: ${inputs[2]?.value || "لا يوجد"}\n`;
+        reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
+        reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
+        reportData += `الجهات الأمنية المتواجدة: ${textareas[1]?.value || "لا يوجد"}\n`;
+        reportData += `ملاحظة إيجابية: ${textareas[2]?.value || "لا يوجد"}\n`;
+        reportData += `ملاحظة سلبية: ${textareas[3]?.value || "لا يوجد"}\n`;
+      } else if (selectedReport === 3) {
+        // Zone Officer Report
+        reportData += `رئيس رقباء: ${inputs[2]?.value || "لا يوجد"}\n`;
+        reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
+        reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
+        reportData += `الوحدات التابعة للمنطقة: ${textareas[1]?.value || "لا يوجد"}\n`;
+        reportData += `عدد الوحدات عند الاستلام: ${textareas[2]?.value || "لا يوجد"}\n`;
+        reportData += `عدد الوحدات عند الانتهاء: ${textareas[3]?.value || "لا يوجد"}\n`;
+        reportData += `ملاحظة إيجابية: ${textareas[4]?.value || "لا يوجد"}\n`;
+        reportData += `ملاحظة سلبية: ${textareas[5]?.value || "لا يوجد"}\n`;
+        reportData += `وقت الشفت: ${selects[1]?.value || "لا يوجد"}\n`;
+      }
     }
 
     navigator.clipboard.writeText(reportData).then(() => {
@@ -206,21 +234,24 @@ export default function Home() {
                     أقسام الأمن العام
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { window.open('https://docs.google.com/spreadsheets/d/16bCKLGcCWqWgrFAk1yaZy3AW1UiP8o8ulixc_KzSL7E/edit?usp=sharing', '_blank'); handleDropdownLeave(); }} className="cursor-pointer hover:bg-primary/10 transition-all duration-200">
-                    <AlertTriangle className="w-4 h-4 ml-2" />
+                    <FileText className="w-4 h-4 ml-2" />
                     مخالفات منسوبي الأمن العام
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { window.open('https://docs.google.com/spreadsheets/d/1YOKCwZXm2qU3cRnrMxRjXnVbVJ2AezvRy3Io5u7xgz0/edit?usp=sharing', '_blank'); handleDropdownLeave(); }} className="cursor-pointer hover:bg-primary/10 transition-all duration-200">
-                    <AlertTriangle className="w-4 h-4 ml-2" />
+                    <FileText className="w-4 h-4 ml-2" />
                     المخالفات
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <div onMouseEnter={() => handleDropdownEnter('promotions')} onMouseLeave={handleDropdownLeave}>
               <DropdownMenu open={promotionsDropdownOpen} onOpenChange={setPromotionsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 flex items-center gap-1"
+                  >
                     الترقيات
                     <ChevronDown className="w-4 h-4" />
                   </Button>
@@ -237,11 +268,14 @@ export default function Home() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
+
             <div onMouseEnter={() => handleDropdownEnter('guides')} onMouseLeave={handleDropdownLeave}>
               <DropdownMenu open={guidesDropdownOpen} onOpenChange={setGuidesDropdownOpen}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 flex items-center gap-1"
+                  >
                     الأدلة الشاملة
                     <ChevronDown className="w-4 h-4" />
                   </Button>
@@ -258,317 +292,245 @@ export default function Home() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
-            <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300" onClick={() => window.open('https://discord.com/channels/1399408243637227746/1427731991201316925', '_blank')}>
-              تعاميم الأمن العام
-            </Button>
-            
 
+            <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300" onClick={() => window.open('https://discord.com/channels/1399408243637227746/1442030235154645244', '_blank')}>تعاميم الأمن العام</Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300" onClick={() => window.open('https://discord.com/channels/1399408243637227746/1442030235154645244', '_blank')}>الأنظمة والقوانين</Button>
           </nav>
-          
-          <Button variant="outline" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            <Menu className="w-5 h-5" />
-          </Button>
         </div>
       </header>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-background/95 border-b border-border/40 animate-fade-in">
-          <div className="container mx-auto py-4 space-y-2">
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={() => { setActiveSection("home"); setMobileMenuOpen(false); }}>الرئيسية</Button>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={() => { setActiveSection("wave"); setMobileMenuOpen(false); }}>تسمية الموجة</Button>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={() => { setActiveSection("reports"); setMobileMenuOpen(false); }}>التقارير</Button>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10" onClick={() => { setActiveSection("protocols"); setMobileMenuOpen(false); }}>البروتوكولات</Button>
-          </div>
-        </div>
-      )}
-
-      <main className="container mx-auto py-8 space-y-8">
-        {/* Hero Section */}
-        {activeSection === "home" && (
-        <section className="text-center py-12 relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-b from-primary/5 to-transparent animate-fade-in">
-          <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
-          <div className="relative z-10">
-            <button onClick={() => setActiveSection("home")} className="inline-block hover:scale-110 transition-transform duration-300 cursor-pointer">
-              <img src="/images/logo.png" alt="مقاطعة النخيل" className="w-24 h-24 mx-auto mb-6 rounded-full shadow-[0_0_30px_rgba(212,175,55,0.3)] animate-glow" />
-            </button>
-            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4 drop-shadow-lg">مديرية الأمن العام</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">في خدمة الوطن والمواطن - مقاطعة النخيل</p>
-            
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => setActiveSection("reports")}>
-                <FileText className="ml-2 w-5 h-5" />
-                إنشاء تقرير جديد
-              </Button>
-              <Button size="lg" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => window.open('https://discord.com/channels/1399408243637227746/1442030235154645244', '_blank')}>
-                <Shield className="ml-2 w-5 h-5" />
-                الأنظمة والقوانين
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        )}
-
-        {/* Wave Naming Section */}
-        {(activeSection === "home" || activeSection === "wave") && (
-        <section className="grid md:grid-cols-12 gap-6 animate-fade-in">
-          <Card className="md:col-span-12 glass border-primary/20 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/30">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-primary">
-                <Radio className="w-5 h-5" />
-                تسمية الموجة
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-12 gap-6 items-end">
-                <div className="md:col-span-4 space-y-2">
-                  <Label htmlFor="position" className="text-muted-foreground">التوجيه</Label>
-                  <Input 
-                    id="position" 
-                    placeholder="مثال: جيم 1" 
-                    className="bg-background/50 border-primary/20 focus:border-primary transition-all duration-300"
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                  />
-                </div>
-                
-                <div className="md:col-span-4 space-y-2">
-                  <Label htmlFor="code" className="text-muted-foreground">رقم الكود</Label>
-                  <div className="relative">
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono">P-</span>
+      {/* Main Content */}
+      <main className="container mx-auto py-8">
+        {activeSection === "wave" && (
+          <section className="max-w-2xl mx-auto animate-fade-in">
+            <Card className="glass border-primary/10 shadow-2xl shadow-primary/5">
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl font-bold text-primary flex items-center justify-center gap-3">
+                  <Radio className="w-8 h-8" />
+                  تسمية الموجة
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-muted-foreground">الكود (مثال: 007)</Label>
                     <Input 
-                      id="code" 
-                      placeholder="000" 
-                      className="pr-8 font-mono bg-background/50 border-primary/20 focus:border-primary transition-all duration-300"
-                      value={code}
+                      placeholder="أدخل الكود" 
+                      value={code} 
                       onChange={(e) => setCode(e.target.value)}
+                      className="bg-background/50 border-primary/10 focus:border-primary/30 transition-all duration-300"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-muted-foreground">التوجيه (مثال: عمليات)</Label>
+                    <Input 
+                      placeholder="أدخل التوجيه" 
+                      value={position} 
+                      onChange={(e) => setPosition(e.target.value)}
+                      className="bg-background/50 border-primary/10 focus:border-primary/30 transition-all duration-300"
                     />
                   </div>
                 </div>
-                
-                <div className="md:col-span-4">
-                  <Button 
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold transition-all duration-300 hover:scale-105 active:scale-95"
-                    onClick={handleCopyName}
-                  >
-                    {copied ? <Check className="ml-2 w-5 h-5 animate-pulse" /> : <Copy className="ml-2 w-5 h-5" />}
-                    {copied ? "تم النسخ!" : "إنشاء الاسم ونسخ"}
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Preview */}
-              {(code || position) && (
-                <div className="mt-6 p-4 rounded-lg bg-background/30 border border-dashed border-primary/30 flex items-center justify-between animate-fade-in">
-                  <span className="text-sm text-muted-foreground">المعاينة:</span>
-                  <code className="font-mono text-lg text-primary font-bold dir-ltr">
-                    {position || "التوجيه"} | P-{code || "000"}
-                  </code>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </section>
-
+                <Button 
+                  onClick={handleCopyName} 
+                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                >
+                  {copied ? <Check className="ml-2 w-5 h-5" /> : <Copy className="ml-2 w-5 h-5" />}
+                  {copied ? "تم النسخ بنجاح" : "نسخ الاسم المنسق"}
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
         )}
 
-        {/* Reports Section */}
-        {(activeSection === "home" || activeSection === "reports") && (
-        <section className="animate-fade-in">
-          <div className="flex items-center gap-2 mb-6">
-            <FileText className="w-6 h-6 text-primary" />
-            <h3 className="text-2xl font-bold text-foreground">إنشاء التقارير</h3>
-          </div>
-          
-          <div className="grid md:grid-cols-4 gap-4 mb-6">
-            {["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"].map((report, i) => (
-              <Button 
-                key={i} 
-                onClick={() => setSelectedReport(i)}
-                variant={selectedReport === i ? "default" : "outline"} 
-                className={`h-12 transition-all duration-300 hover:scale-105 active:scale-95 ${selectedReport === i ? "bg-primary text-primary-foreground" : "border-primary/30 hover:border-primary hover:bg-primary/5"}`}
-              >
-                {report}
-              </Button>
-            ))}
-          </div>
-          
-          <Card className="glass border-primary/10 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30">
-            <CardContent className="p-6 space-y-6" data-report-form>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">وقت البداية</Label>
-                  <Input placeholder="2:00 م" className="bg-background/50 border-primary/10 transition-all duration-300" value={selectedReport === 0 ? losSantosData.startTime || "" : selectedReport === 1 ? sandyData.startTime || "" : selectedReport === 2 ? officersData.startTime || "" : zoneOfficerData.startTime || ""} onChange={(e) => updateReportData(selectedReport, 'startTime', e.target.value)} />
+        {activeSection === "reports" && (
+          <section className="max-w-4xl mx-auto animate-fade-in">
+            <Card className="glass border-primary/10 shadow-2xl shadow-primary/5">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-primary flex items-center gap-3">
+                  <FileText className="w-7 h-7" />
+                  نظام التقارير الذكي
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <div className="flex flex-wrap gap-2">
+                  {["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"].map((name, idx) => (
+                    <Button
+                      key={idx}
+                      variant={selectedReport === idx ? "default" : "secondary"}
+                      onClick={() => setSelectedReport(idx)}
+                      className={`transition-all duration-300 ${selectedReport === idx ? "shadow-lg shadow-primary/20 scale-105" : "hover:bg-secondary/80"}`}
+                    >
+                      {name}
+                    </Button>
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">وقت النهاية</Label>
-                  <Input placeholder="3:00 م" className="bg-background/50 border-primary/10 transition-all duration-300" value={selectedReport === 0 ? losSantosData.endTime || "" : selectedReport === 1 ? sandyData.endTime || "" : selectedReport === 2 ? officersData.endTime || "" : zoneOfficerData.endTime || ""} onChange={(e) => updateReportData(selectedReport, 'endTime', e.target.value)} />
-                </div>
-              </div>
-              
-              {selectedReport !== 2 && selectedReport !== 3 && (
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">العمليات (Discord ID)</Label>
-                  <Input placeholder="Discord ID" className="bg-background/50 border-primary/10 transition-all duration-300" value={getReportFieldValue('operations')} onChange={(e) => updateReportData(selectedReport, 'operations', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">نائب العمليات (Discord ID)</Label>
-                  <Input placeholder="Discord ID" className="bg-background/50 border-primary/10 transition-all duration-300" value={getReportFieldValue('deputyOperations')} onChange={(e) => updateReportData(selectedReport, 'deputyOperations', e.target.value)} />
-                </div>
-              </div>
-              )}
-              
-              {selectedReport === 2 && (
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">الضابط (Discord ID)</Label>
-                  <Input placeholder="Discord ID" className="bg-background/50 border-primary/10 transition-all duration-300" value={getReportFieldValue('officer')} onChange={(e) => updateReportData(selectedReport, 'officer', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground">المنطقة</Label>
-                  <select className="w-full px-3 py-2 rounded-md bg-background/50 border border-primary/10 text-foreground focus:border-primary transition-all duration-300" value={getReportFieldValue('zone')} onChange={(e) => updateReportData(selectedReport, 'zone', e.target.value)}>
-                    <option value="">اختر المنطقة</option>
-                    <option value="لوس سانتوس">لوس سانتوس</option>
-                    <option value="ساندي وبليتو">ساندي وبليتو</option>
-                  </select>
-                </div>
-              </div>
-              )}
-              
-              <Separator className="bg-primary/10" />
-              
-              {selectedReport === 2 ? (
-              <div className="grid md:grid-cols-2 gap-4">
-                {[
-                  { label: "رقم المهمة", field: "taskNumber" },
-                  { label: "الجهات الأمنية المتواجدة", field: "securityAgencies" },
-                  { label: "ملاحظة إيجابية", field: "positiveNote" },
-                  { label: "ملاحظة سلبية", field: "negativeNote" }
-                ].map((item, i) => (
-                  <div key={i} className="space-y-2">
-                    <Label className="text-xs text-primary/80">{item.label}</Label>
-                    <Textarea placeholder="..." value={getReportFieldValue(item.field)} onChange={(e) => updateReportData(selectedReport, item.field, e.target.value)} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+
+                <div className="grid md:grid-cols-2 gap-6" data-report-form>
+                  <div className="space-y-2">
+                    <Label className="text-xs text-primary/80">وقت البداية</Label>
+                    <input type="time" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300 focus:border-primary/30 outline-none" />
                   </div>
-                ))
-              }
-              </div>
-              ) : (
-              <div className="grid md:grid-cols-3 gap-4">
-                {selectedReport === 0 ? (
-                  // Los Santos Report
-                  [
-                    { label: "القيادات", field: "leadership" },
-                    { label: "الضباط", field: "officers" },
-                    { label: "الدورات المفعلة", field: "activeCourses" },
-                    { label: "الشرطة العسكرية", field: "militaryPolice" },
-                    { label: "ضابط خفر", field: "guardOfficer" },
-                    { label: "جيم 1", field: "jim1" },
-                    { label: "جيم 2", field: "jim2" },
-                    { label: "جيم 3", field: "jim3" },
-                    { label: "جيم 4", field: "jim4" },
-                    { label: "جيم 5", field: "jim5" },
-                    { label: "عين 1", field: "ain1" },
-                    { label: "سير 1", field: "sir1" }
-                  ].map((item, i) => (
-                    <div key={i} className="space-y-2">
-                      <Label className="text-xs text-primary/80">{item.label}</Label>
-                      <Textarea placeholder="..." value={getReportFieldValue(item.field)} onChange={(e) => updateReportData(selectedReport, item.field, e.target.value)} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                  <div className="space-y-2">
+                    <Label className="text-xs text-primary/80">وقت النهاية</Label>
+                    <input type="time" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300 focus:border-primary/30 outline-none" />
+                  </div>
+
+                  {selectedReport === 0 && (
+                    // Los Santos Report
+                    <div className="col-span-full space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">العمليات (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">نائب العمليات (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"].map((label, i) => (
+                          <div key={i} className="space-y-2">
+                            <Label className="text-xs text-primary/80">{label}</Label>
+                            <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))
-                ) : selectedReport === 1 ? (
-                  // Sandy & Paleto Report
-                  [
-                    { label: "القيادات", field: "leadership" },
-                    { label: "الضباط", field: "officers" },
-                    { label: "الدورات المفعلة", field: "activeCourses" },
-                    { label: "الشرطة العسكرية", field: "militaryPolice" },
-                    { label: "ضابط خفر", field: "guardOfficer" },
-                    { label: "سين 1", field: "sin1" },
-                    { label: "سين 2", field: "sin2" },
-                    { label: "باء 1", field: "ba1" },
-                    { label: "عين 1", field: "ain1" },
-                    { label: "سير 1", field: "sir1" }
-                  ].map((item, i) => (
-                    <div key={i} className="space-y-2">
-                      <Label className="text-xs text-primary/80">{item.label}</Label>
-                      <Textarea placeholder="..." value={getReportFieldValue(item.field)} onChange={(e) => updateReportData(selectedReport, item.field, e.target.value)} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                  )}
+
+                  {selectedReport === 1 && (
+                    // Sandy & Paleto Report
+                    <div className="col-span-full space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">العمليات (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">نائب العمليات (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "وحدات سين", "باء", "الوحدات المشتركة"].map((label, i) => (
+                          <div key={i} className="space-y-2">
+                            <Label className="text-xs text-primary/80">{label}</Label>
+                            <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))
-                ) : (
-                  // Zone Officer Report
-                  <div className="col-span-full space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">رئيس رقباء (Discord ID)</Label>
-                        <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                  )}
+
+                  {selectedReport === 2 && (
+                    // Officers Report
+                    <div className="col-span-full space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">الضابط (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">المنطقة</Label>
+                          <select className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300">
+                            <option>اختر المنطقة</option>
+                            <option>لوس سانتوس</option>
+                            <option>ساندي وبليتو</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">رقم المهمة</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">الجهات الأمنية المتواجدة</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">ملاحظة إيجابية</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">ملاحظة سلبية</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedReport === 3 && (
+                    // Zone Officer Report
+                    <div className="col-span-full space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">رئيس رقباء (Discord ID)</Label>
+                          <input type="text" placeholder="Discord ID" className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">المنطقة</Label>
+                          <select className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300">
+                            <option>اختر المنطقة</option>
+                            <option>لوس سانتوس</option>
+                            <option>ساندي وبليتو</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">رقم المهمة</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">الوحدات التابعة للمنطقة</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">عدد الوحدات عند الاستلام</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">عدد الوحدات عند الانتهاء</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">ملاحظة إيجابية</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-primary/80">ملاحظة سلبية</Label>
+                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">المنطقة</Label>
+                        <Label className="text-xs text-primary/80">وقت الشفت</Label>
                         <select className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300">
-                          <option>اختر المنطقة</option>
-                          <option>لوس سانتوس</option>
-                          <option>ساندي وبليتو</option>
+                          <option>اختر وقت الشفت</option>
+                          <option>صباحا</option>
+                          <option>مساء</option>
                         </select>
                       </div>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">رقم المهمة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">الوحدات التابعة للمنطقة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">عدد الوحدات عند الاستلام</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">عدد الوحدات عند الانتهاء</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">ملاحظة إيجابية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-primary/80">ملاحظة سلبية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs text-primary/80">وقت الشفت</Label>
-                      <select className="w-full px-3 py-2 bg-background/50 border border-primary/10 rounded-md font-mono text-sm transition-all duration-300">
-                        <option>اختر وقت الشفت</option>
-                        <option>صباحا</option>
-                        <option>مساء</option>
-                      </select>
-                    </div>
-                  </div>
+                  )}
+                </div>
+                
+                {selectedReport !== 2 && selectedReport !== 3 && (
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground">تسجيل الخروج</Label>
+                  <Textarea placeholder="..." className="min-h-[100px] bg-background/50 border-primary/10 transition-all duration-300" />
+                </div>
                 )}
-              </div>
-              )}
-              
-              {selectedReport !== 2 && selectedReport !== 3 && (
-              <div className="space-y-2">
-                <Label className="text-muted-foreground">تسجيل الخروج</Label>
-                <Textarea placeholder="..." className="min-h-[100px] bg-background/50 border-primary/10 transition-all duration-300" />
-              </div>
-              )}
-              
-              <Button onClick={handleCopyReport} className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg shadow-lg shadow-primary/10 transition-all duration-300 hover:scale-105 active:scale-95">
-                <Copy className="ml-2 w-5 h-5" />
-                إنشاء التقرير وحفظه (نسخ)
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
-
+                
+                <Button onClick={handleCopyReport} className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg shadow-lg shadow-primary/10 transition-all duration-300 hover:scale-105 active:scale-95">
+                  <Copy className="ml-2 w-5 h-5" />
+                  إنشاء التقرير وحفظه (نسخ)
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
         )}
 
         {/* Info Grid */}
@@ -639,7 +601,6 @@ export default function Home() {
           </Card>
         </div>
         </div>
-
         )}
 
         {/* Discord Section */}
