@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { ChevronDown, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
@@ -33,8 +33,6 @@ export default function Home() {
   const [sandySharedUnits, setSandySharedUnits] = useState("");
   const [sandyLogout, setSandyLogout] = useState("");
 
-  const { toast } = useToast();
-
   const handleCopyReport = () => {
     const reportForm = document.querySelector('[data-report-form]');
     if (!reportForm) {
@@ -46,7 +44,7 @@ export default function Home() {
     
     if (selectedReport === 1) {
       // Sandy & Paleto Report with new format
-      reportData += `تم استلام مهام العمليات لمنطقة ساندي وبوليتو في تمام الساعه ${sandyStartTime} إلى في تمام الساعة ${sandyEndTime}\n\n\n`;
+      reportData += `تم استلام مهام العمليات لمنطقة ساندي وبوليتو في تمام الساعه ${sandyStartTime || "لايوجد"} إلى في تمام الساعة ${sandyEndTime || "لايوجد"}\n\n\n`;
       reportData += `العمليات| \n`;
       reportData += ` نائب العمليات | \n`;
       reportData += `القيادات \n\n\n`;
