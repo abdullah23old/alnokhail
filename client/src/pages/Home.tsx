@@ -87,12 +87,11 @@ export default function Home() {
     }
 
     const inputs = reportForm.querySelectorAll('input');
-    const selects = reportForm.querySelectorAll('select');
     const textareas = reportForm.querySelectorAll('textarea');
     let reportData = "";
 
     if (selectedReport === 1) {
-      // Sandy & Paleto Report with the exact requested format
+      // تنسيق تقرير ساندي وبوليتو الجديد
       const startTime = inputs[0]?.value || "لايوجد";
       const endTime = inputs[1]?.value || "لايوجد";
       const operations = inputs[2]?.value || "";
@@ -121,8 +120,7 @@ export default function Home() {
       reportData += `—————————————————\n\n`;
       reportData += `ضابط خفر :\n${guardOfficer}\n\n\n`;
       reportData += `—————————————————\n`;
-      reportData += `وحدات سين \n\n\n`;
-      reportData += `${seinUnits}\n \n\n`;
+      reportData += `وحدات سين \n\n\n${seinUnits}\n \n\n`;
       reportData += `—————————————————\n\n\n`;
       reportData += `—————————————————\n\n\n`;
       reportData += `—————————————————\n\n`;
@@ -132,23 +130,23 @@ export default function Home() {
       reportData += `————————————————— \n\n`;
       reportData += `تسجيل خروج :\n${logoutInfo}`;
     } else {
+      // التنسيق الافتراضي للتقارير الأخرى
       reportData += `نوع التقرير: ${["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"][selectedReport]}\n`;
       reportData += `وقت البداية: ${inputs[0]?.value || "لا يوجد"}\n`;
       reportData += `وقت النهاية: ${inputs[1]?.value || "لا يوجد"}\n`;
+      textareas.forEach((textarea: any, index: number) => {
+        const label = textarea.previousElementSibling?.textContent || `حقل ${index + 1}`;
+        reportData += `${label}: ${textarea.value || "لا يوجد"}\n`;
+      });
+    }
 
-      if (selectedReport === 0) {
-        // Los Santos Report
-        reportData += `العمليات: ${inputs[2]?.value || "لا يوجد"}\n`;
-        reportData += `نائب العمليات: ${inputs[3]?.value || "لا يوجد"}\n`;
-        reportData += "\n--- الدورات المفعلة ---\n";
-        const losLosLabels = ["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"];
-        textareas.forEach((textarea: any, index: number) => {
-          if (index < losLosLabels.length) {
-            const value = textarea.value || "لا يوجد";
-            reportData += `${losLosLabels[index]}: ${value}\n`;
-          }
-        });
-        reportData += `\nتسجيل الخروج: ${textareas[textareas.length - 1]?.value || "لا يوجد"}\n`;
+    navigator.clipboard.writeText(reportData).then(() => {
+      toast.success("تم نسخ التقرير بنجاح");
+    }).catch(() => {
+      toast.error("فشل نسخ التقرير");
+    });
+  };
+
       } else if (selectedReport === 2) {
         // Officers Report
         reportData += `الضابط: ${inputs[2]?.value || "لا يوجد"}\n`;
