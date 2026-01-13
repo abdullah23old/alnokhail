@@ -1,8 +1,11 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Shield, Radio, FileText, Users, AlertTriangle, Copy, Check, Menu, ExternalLink, ChevronDown } from "lucide-react";
+import { Shield, Radio, FileText, Users, AlertTriangle, Copy, Check, Menu, ExternalLink, ChevronDown, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -661,7 +664,7 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setMapModalOpen(false)}>
           <div className="relative max-w-4xl max-h-[90vh] bg-background rounded-2xl border border-primary/30 shadow-2xl shadow-primary/50 overflow-auto" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setMapModalOpen(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-primary/20 hover:bg-primary/40 transition-all duration-300">
-              <span className="text-2xl text-primary">×</span>
+              <X className="w-6 h-6 text-primary" />
             </button>
             <img src="/images/city-map.png" alt="خريطة المدينة المعتمدة مكبرة" className="w-full h-auto" />
           </div>
