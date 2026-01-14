@@ -17,7 +17,6 @@ import { toast } from "sonner";
 import { getLoginUrl } from "@/const";
 
 export default function Home() {
-  // The userAuth hooks provides authentication state
   let { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [code, setCode] = useState("");
@@ -47,14 +46,6 @@ export default function Home() {
     setGuidesDropdownOpen(false);
   };
 
-  const handleTextareaChange = (e: any) => {
-    // Allow any text without formatting
-  };
-
-  const handleTextareaChangeNoFormat = (e: any) => {
-    // Allow any text without formatting
-  };
-
   const updateReportData = (reportType: number, field: string, value: string) => {
     if (reportType === 0) {
       setLosSantosData({ ...losSantosData, [field]: value });
@@ -65,14 +56,6 @@ export default function Home() {
     } else if (reportType === 3) {
       setZoneOfficerData({ ...zoneOfficerData, [field]: value });
     }
-  };
-
-  const getReportFieldValue = (field: string) => {
-    if (selectedReport === 0) return losSantosData[field] || "";
-    if (selectedReport === 1) return sandyData[field] || "";
-    if (selectedReport === 2) return officersData[field] || "";
-    if (selectedReport === 3) return zoneOfficerData[field] || "";
-    return "";
   };
 
   const handleCopyReport = () => {
@@ -87,84 +70,109 @@ export default function Home() {
     const textareas = reportForm.querySelectorAll('textarea');
     let reportData = "";
 
-    if (selectedReport === 1) {
-      // Sandy & Paleto Report - Exact Requested Format
-      const startTime = inputs[0]?.value || "لايوجد";
-      const endTime = inputs[1]?.value || "لايوجد";
-      const operations = inputs[2]?.value || "";
-      const deputy = inputs[3]?.value || "";
+    const startTime = inputs[0]?.value || "لايوجد";
+    const endTime = inputs[1]?.value || "لايوجد";
+    const separator = "—————————————————";
+
+    if (selectedReport === 0 || selectedReport === 1) {
+      // Los Santos or Sandy & Paleto Report
+      const regionName = selectedReport === 0 ? "لوس سانتوس" : "ساندي وبوليتو";
+      const operations = inputs[2]?.value || "لايوجد";
+      const deputy = inputs[3]?.value || "لايوجد";
       
       const leadership = textareas[0]?.value || "لايوجد";
       const officers = textareas[1]?.value || "لايوجد";
       const activeCourses = textareas[2]?.value || "لايوجد";
       const militaryPolice = textareas[3]?.value || "لايوجد";
       const guardOfficer = textareas[4]?.value || "لايوجد";
-      const seinUnits = textareas[5]?.value || "لايوجد";
-      const baaUnits = textareas[6]?.value || "1";
-      const sharedUnits = textareas[7]?.value || "لا يوجد";
-      const logoutInfo = textareas[8]?.value || "";
+      
+      let extraUnits = "";
+      if (selectedReport === 1) {
+        // Sandy specific fields
+        const seinUnits = textareas[5]?.value || "لايوجد";
+        const baaUnits = textareas[6]?.value || "1";
+        const sharedUnits = textareas[7]?.value || "لا يوجد";
+        const logoutInfo = textareas[8]?.value || "لايوجد";
 
-      reportData += `تم استلام مهام العمليات لمنطقة ساندي وبوليتو في تمام الساعه ${startTime} إلى في تمام الساعة ${endTime}\n\n\n`;
+        extraUnits = `وحدات سين \n\n${seinUnits}\n\n${separator}\n\n${separator}\n\n${separator}\n\nباء : ${baaUnits} \n\n\n\n\n${separator}\n\n\n\n\nالوحدات المشتركة :\n${sharedUnits}\n\n${separator} \n\nتسجيل خروج :\n${logoutInfo}`;
+      } else {
+        // Los Santos specific fields
+        const g1 = textareas[5]?.value || "لايوجد";
+        const g2 = textareas[6]?.value || "لايوجد";
+        const g3 = textareas[7]?.value || "لايوجد";
+        const g4 = textareas[8]?.value || "لايوجد";
+        const g5 = textareas[9]?.value || "لايوجد";
+        const a1 = textareas[10]?.value || "لايوجد";
+        const s1 = textareas[11]?.value || "لايوجد";
+        const logoutInfo = textareas[12]?.value || "لايوجد";
+
+        extraUnits = `جيم 1: ${g1}\nجيم 2: ${g2}\nجيم 3: ${g3}\nجيم 4: ${g4}\nجيم 5: ${g5}\nعين 1: ${a1}\nسير 1: ${s1}\n\n${separator}\n\nتسجيل خروج :\n${logoutInfo}`;
+      }
+
+      reportData = `تم استلام مهام العمليات لمنطقة ${regionName} في تمام الساعه ${startTime} إلى في تمام الساعة ${endTime}\n\n\n`;
       reportData += `العمليات| ${operations}\n`;
       reportData += ` نائب العمليات | ${deputy}\n`;
       reportData += `القيادات \n${leadership}\n\n`;
-      reportData += `—————————————————\n\n`;
+      reportData += `${separator}\n\n`;
       reportData += `الضباط\n${officers}\n`;
-      reportData += `—————————————————\n\n`;
+      reportData += `${separator}\n\n`;
       reportData += `الدورات المفعلة :\n${activeCourses}\n\n`;
-      reportData += `—————————————————\n\n`;
+      reportData += `${separator}\n\n`;
       reportData += `الشرطة العسكرية\n${militaryPolice}\n\n`;
-      reportData += `—————————————————\n\n`;
+      reportData += `${separator}\n\n`;
       reportData += `ضابط خفر :\n${guardOfficer}\n\n\n`;
-      reportData += `—————————————————\n`;
-      reportData += `وحدات سين \n\n\n`;
-      reportData += `${seinUnits}\n \n\n`;
-      reportData += `—————————————————\n\n\n`;
-      reportData += `—————————————————\n\n\n`;
-      reportData += `—————————————————\n\n`;
-      reportData += `باء : ${baaUnits} \n\n\n\n\n`;
-      reportData += `—————————————————\n\n\n\n\n`;
-      reportData += `الوحدات المشتركة :\n${sharedUnits}\n\n`;
-      reportData += `————————————————— \n\n`;
-      reportData += `تسجيل خروج :\n${logoutInfo}`;
-    } else {
-      reportData += `نوع التقرير: ${["تقرير لوس سانتوس", "تقرير ساندي وبوليتو", "تقرير الضباط", "تقرير ضابط منطقة"][selectedReport]}\n`;
-      reportData += `وقت البداية: ${inputs[0]?.value || "لا يوجد"}\n`;
-      reportData += `وقت النهاية: ${inputs[1]?.value || "لا يوجد"}\n`;
+      reportData += `${separator}\n`;
+      reportData += extraUnits;
 
-      if (selectedReport === 0) {
-        // Los Santos Report
-        reportData += `العمليات: ${inputs[2]?.value || "لا يوجد"}\n`;
-        reportData += `نائب العمليات: ${inputs[3]?.value || "لا يوجد"}\n`;
-        reportData += "\n--- الدورات المفعلة ---\n";
-        const losLosLabels = ["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"];
-        textareas.forEach((textarea: any, index: number) => {
-          if (index < losLosLabels.length) {
-            const value = textarea.value || "لا يوجد";
-            reportData += `${losLosLabels[index]}: ${value}\n`;
-          }
-        });
-        reportData += `\nتسجيل الخروج: ${textareas[textareas.length - 1]?.value || "لا يوجد"}\n`;
-      } else if (selectedReport === 2) {
-        // Officers Report
-        reportData += `الضابط: ${inputs[2]?.value || "لا يوجد"}\n`;
-        reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
-        reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
-        reportData += `الجهات الأمنية المتواجدة: ${textareas[1]?.value || "لا يوجد"}\n`;
-        reportData += `ملاحظة إيجابية: ${textareas[2]?.value || "لا يوجد"}\n`;
-        reportData += `ملاحظة سلبية: ${textareas[3]?.value || "لا يوجد"}\n`;
-      } else if (selectedReport === 3) {
-        // Zone Officer Report
-        reportData += `رئيس رقباء: ${inputs[2]?.value || "لا يوجد"}\n`;
-        reportData += `المنطقة: ${selects[0]?.value || "لا يوجد"}\n`;
-        reportData += `رقم المهمة: ${textareas[0]?.value || "لا يوجد"}\n`;
-        reportData += `الوحدات التابعة للمنطقة: ${textareas[1]?.value || "لا يوجد"}\n`;
-        reportData += `عدد الوحدات عند الاستلام: ${textareas[2]?.value || "لا يوجد"}\n`;
-        reportData += `عدد الوحدات عند الانتهاء: ${textareas[3]?.value || "لا يوجد"}\n`;
-        reportData += `ملاحظة إيجابية: ${textareas[4]?.value || "لا يوجد"}\n`;
-        reportData += `ملاحظة سلبية: ${textareas[5]?.value || "لا يوجد"}\n`;
-        reportData += `وقت الشفت: ${selects[1]?.value || "لا يوجد"}\n`;
-      }
+    } else if (selectedReport === 2) {
+      // Officers Report
+      const officer = inputs[2]?.value || "لايوجد";
+      const region = selects[0]?.value || "لايوجد";
+      const missionNum = textareas[0]?.value || "لايوجد";
+      const securityAgencies = textareas[1]?.value || "لايوجد";
+      const positiveNote = textareas[2]?.value || "لايوجد";
+      const negativeNote = textareas[3]?.value || "لايوجد";
+
+      reportData = `تقرير الضباط\nوقت العمل: من ${startTime} إلى ${endTime}\n\n`;
+      reportData += `الضابط: ${officer}\n`;
+      reportData += `المنطقة: ${region}\n`;
+      reportData += `${separator}\n`;
+      reportData += `رقم المهمة:\n${missionNum}\n`;
+      reportData += `${separator}\n`;
+      reportData += `الجهات الأمنية المتواجدة:\n${securityAgencies}\n`;
+      reportData += `${separator}\n`;
+      reportData += `ملاحظة إيجابية:\n${positiveNote}\n`;
+      reportData += `${separator}\n`;
+      reportData += `ملاحظة سلبية:\n${negativeNote}\n`;
+      reportData += `${separator}`;
+
+    } else if (selectedReport === 3) {
+      // Zone Officer Report
+      const chief = inputs[2]?.value || "لايوجد";
+      const region = selects[0]?.value || "لايوجد";
+      const missionNum = textareas[0]?.value || "لايوجد";
+      const units = textareas[1]?.value || "لايوجد";
+      const startUnits = textareas[2]?.value || "لايوجد";
+      const endUnits = textareas[3]?.value || "لايوجد";
+      const positiveNote = textareas[4]?.value || "لايوجد";
+      const negativeNote = textareas[5]?.value || "لايوجد";
+      const shiftTime = selects[1]?.value || "لايوجد";
+
+      reportData = `تقرير ضابط منطقة\nوقت العمل: من ${startTime} إلى ${endTime} (${shiftTime})\n\n`;
+      reportData += `رئيس رقباء: ${chief}\n`;
+      reportData += `المنطقة: ${region}\n`;
+      reportData += `${separator}\n`;
+      reportData += `رقم المهمة:\n${missionNum}\n`;
+      reportData += `${separator}\n`;
+      reportData += `الوحدات التابعة للمنطقة:\n${units}\n`;
+      reportData += `${separator}\n`;
+      reportData += `عدد الوحدات عند الاستلام: ${startUnits}\n`;
+      reportData += `عدد الوحدات عند الانتهاء: ${endUnits}\n`;
+      reportData += `${separator}\n`;
+      reportData += `ملاحظة إيجابية:\n${positiveNote}\n`;
+      reportData += `${separator}\n`;
+      reportData += `ملاحظة سلبية:\n${negativeNote}\n`;
+      reportData += `${separator}`;
     }
 
     navigator.clipboard.writeText(reportData).then(() => {
@@ -432,7 +440,7 @@ export default function Home() {
                       {["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "جيم 1", "جيم 2", "جيم 3", "جيم 4", "جيم 5", "عين 1", "سير 1"].map((label, i) => (
                         <div key={i} className="space-y-2">
                           <Label className="text-xs text-primary/80">{label}</Label>
-                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                          <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                         </div>
                       ))}
                     </div>
@@ -455,7 +463,7 @@ export default function Home() {
                       {["القيادات", "الضباط", "الدورات المفعلة", "الشرطة العسكرية", "ضابط خفر", "وحدات سين", "باء", "الوحدات المشتركة"].map((label, i) => (
                         <div key={i} className="space-y-2">
                           <Label className="text-xs text-primary/80">{label}</Label>
-                          <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                          <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                         </div>
                       ))}
                     </div>
@@ -481,19 +489,19 @@ export default function Home() {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">رقم المهمة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">الجهات الأمنية المتواجدة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">ملاحظة إيجابية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">ملاحظة سلبية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                     </div>
                   </div>
@@ -518,27 +526,27 @@ export default function Home() {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">رقم المهمة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">الوحدات التابعة للمنطقة</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">عدد الوحدات عند الاستلام</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">عدد الوحدات عند الانتهاء</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">ملاحظة إيجابية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-xs text-primary/80">ملاحظة سلبية</Label>
-                        <Textarea placeholder="..." onChange={handleTextareaChangeNoFormat} className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
+                        <Textarea placeholder="..." className="min-h-[80px] bg-background/50 border-primary/10 font-mono text-sm resize-none transition-all duration-300" />
                       </div>
                     </div>
                     <div className="space-y-2">
